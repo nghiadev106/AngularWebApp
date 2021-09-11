@@ -1,0 +1,181 @@
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+  <div class="container">
+    <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+      <div class="col-first">
+        <h1>Shopping Cart</h1>
+        <nav class="d-flex align-items-center">
+          <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+          <a href="category.html">Cart</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Cart Area =================-->
+<section class="cart_area">
+  <div class="container">
+    <div class="cart_inner">
+      <div class="table-responsive">
+        <table class="table" *ngIf="products.length>0">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Sub Total</th>
+              <th scope="col">#</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of products">
+              <td>
+                <div class="media">
+                  <div class="d-flex">
+                    <img [src]="baseFolder + item.ThumbnailImage" style="height: 100px;" alt="{{item.Name}}">
+                  </div>
+                  <div class="media-body">
+                    <p>{{item.Name}}</p>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <h5>{{item.PromotionPrice| currency : "VND" : true}}</h5>
+              </td>
+              <td>
+                <div class="product_count">
+                  <input type="text" name="qty" id="sst" minlength="1" maxlength="12" value="{{item.Quantity}}"
+                    title="Quantity:" class="input-text qty">
+                  <button (click)="updateProduct(item.ID,item.Quantity+1)" class="increase items-count" type="button"><i
+                      class="lnr lnr-chevron-up"></i></button>
+                  <button (click)="updateProduct(item.ID,item.Quantity-1)" class="reduced items-count" type="button"><i
+                      class="lnr lnr-chevron-down"></i></button>
+                </div>
+              </td>
+              <td>
+                <h5>${{item.PromotionPrice*item.Quantity| currency : "VND" : true}}</h5>
+              </td>
+              <td>
+                <button (click)="deleteProduct(item.ID)" class="btn btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td>
+
+              </td>
+                <td>
+
+                </td>
+              <td>
+                <h5>Total</h5>
+              </td>
+              <td>
+                <h5>{{totalMoney | currency : 'VND' : true}}</h5>
+              </td>
+            </tr>
+
+            <tr class="out_button_area">
+              <td>
+              </td>
+              <td>
+              </td>
+              <td>
+              </td>
+              <td>
+              </td>
+              <td>
+                <div class="checkout_btn_inner d-flex align-items-center">
+                  <a class="gray_btn" routerLink="/">Continue Shopping</a>
+                  <a class="primary-btn" (click)="showCheckout()">Proceed to checkout</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="billing_details" *ngIf="isCheckout">
+        <div class="row">
+          <div class="col-lg-12">
+            <h3>Billing Details</h3>
+            <form class="row contact_form" #addEditForm="ngForm" (ngSubmit)="Checkout(addEditForm.valid)" method="post"
+              novalidate="novalidate">
+              <div class="col-md-12 form-group p_star">
+                <label for="f-option3">Full Name:</label>
+                <input type="text" #customerName="ngModel" [(ngModel)]="entity.CustomerName" required minlength="3"
+                  name="customerName" class="form-control">
+                <small [hidden]="customerName.valid || (customerName.pristine && !addEditForm.submitted)"
+                  class="text-danger">
+                  Bạn phải nhập họ và tên
+                </small>
+
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <label for="f-option3">Email Address:</label>
+                <input type="text" #customerEmail="ngModel" [(ngModel)]="entity.CustomerEmail"
+                  pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required name="customerEmail"
+                  class="form-control" id="last">
+                <small [hidden]="customerEmail.valid || (customerEmail.pristine && !addEditForm.submitted)"
+                  class="text-danger">
+                  Bạn phải nhập email
+                </small>
+              </div>
+              <div class="col-md-6 form-group p_star">
+                <label for="f-option3">Phone number:</label>
+                <input type="text" #customerMobile="ngModel" [(ngModel)]="entity.CustomerMobile" required
+                  name="customerMobile" class="form-control">
+                <small [hidden]="customerMobile.valid || (customerMobile.pristine && !addEditForm.submitted)"
+                  class="text-danger">
+                  Bạn phải nhập số điện thoại
+                </small>
+
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <label for="f-option3">Address:</label>
+                <input type="text" #CustomerAddress="ngModel" [(ngModel)]="entity.CustomerAddress" required
+                  name="CustomerAddress" class="form-control">
+                <small [hidden]="CustomerAddress.valid || (CustomerAddress.pristine && !addEditForm.submitted)"
+                  class="text-danger">
+                  Bạn phải địa chỉ
+                </small>
+
+              </div>
+              <div class="form-group col-md-12">
+                <label for="f-option3">Choose payment method:</label>
+                <select class="form-control" #paymentMethod="ngModel" name="paymentMethod"
+                  [(ngModel)]="entity.PaymentMethod">
+                  <option value="">--Chọn phương thức thanh toán--</option>
+                  <option value="CASH">Tiền mặt</option>
+                  <option value="BANKING">Chuyển khoản</option>
+                </select>
+              </div>
+              <div class="col-md-12 form-group">
+                <label for="f-option3">Order notes:</label>
+                <textarea class="form-control" #customerMessage="ngModel" [(ngModel)]="entity.CustomerMessage"
+                  name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
+              </div>
+              <div class="checkout_btn_inner d-flex align-items-center">
+                <button type="submit" class="primary-btn" [disabled]="!addEditForm.form.valid">Checkout</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout_btn_inner d-flex align-items-center" *ngIf="products.length===0 && isCheckoutSuccess===false">
+        <h3>No products in cart</h3><br>
+        <a class="gray_btn" routerLink="/">Continue Shopping</a>
+      </div>
+
+      <div class="checkout_btn_inner d-flex align-items-center"  *ngIf="isCheckoutSuccess">
+        <h3>Order payment successful</h3><br>
+        <a class="gray_btn" routerLink="/">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!--================End Cart Area =================-->
